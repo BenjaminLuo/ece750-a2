@@ -97,6 +97,7 @@ public class SampleHandler extends AbstractHandler {
 	    astRoot.accept(methodVisitor);
 	    
 	    System.out.println("Number of 'Throw Within Finally': " + Integer.toString(tryVisitor.getThrowWithinFinallyCount()));
+	    System.out.println("Number of 'Log and Throw': " + Integer.toString(tryVisitor.getLogAndThrowCount()));
 	    System.out.println("Number of 'Throws Generic': " + Integer.toString(methodVisitor.getThrowsGenericCount()));
 	    System.out.println("Number of 'Throws Kitchen Sink': " + Integer.toString(methodVisitor.getThrowsKitchenSinkCount()));
 

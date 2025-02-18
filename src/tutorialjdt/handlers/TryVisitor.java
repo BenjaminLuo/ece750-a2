@@ -1,20 +1,30 @@
 package tutorialjdt.handlers;
 
+import java.awt.print.Printable;
+
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.CatchClause;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 
 public class TryVisitor extends ASTVisitor {
     
     private int throwWithinFinallyCounter = 0;
+    private int logAndThrowCounter = 0;
     private ICompilationUnit unit;
     
     public int getThrowWithinFinallyCount() {
     	return this.throwWithinFinallyCounter;
+    }
+    
+    public int getLogAndThrowCount() {
+    	return this.logAndThrowCounter;
     }
     
     public TryVisitor(ICompilationUnit unit) {
@@ -48,7 +58,51 @@ public class TryVisitor extends ASTVisitor {
                 System.out.println("----");
             }
         }
+        
+        if (node.getBody() != null) {
+            node.getBody().accept(this); // Visit the try block
+        }
+
+//        for (Object catchClause : node.catchClauses()) {
+//            ((CatchClause) catchClause).accept(this); // Visit each catch clause
+//        }
+        
         return super.visit(node);
+    }
+    
+    @Override
+    public boolean visit(CatchClause node) {
+        Block catchBody = node.getBody();
+        if (catchBody != null) {
+            boolean hasLogging = false;
+            boolean hasThrow = false;
+
+            for (Object statement : catchBody.statements()) {
+                if (statement instanceof ExpressionStatement) {
+                    ExpressionStatement exprStmt = (ExpressionStatement) statement;
+                    if (exprStmt.getExpression() instanceof MethodInvocation) {
+                        MethodInvocation methodInvocation = (MethodInvocation) exprStmt.getExpression();
+                        if (isLoggingMethod(methodInvocation)) {
+                            hasLogging = true;
+                        }
+                    }
+                } else if (statement instanceof ThrowStatement) {
+                    hasThrow = true;
+                }
+            }
+
+            if (hasLogging && hasThrow) {
+            	this.logAndThrowCounter += 1;
+                System.out.println("[ANTIPATTERN WARNING] 'Log and Throw' anti-pattern detected: " + getLocation(node.getStartPosition()) + "\n" + node.toString());
+                System.out.println("----");
+            }
+        }
+        return super.visit(node);
+    }
+        
+    private boolean isLoggingMethod(MethodInvocation methodInvocation) {
+        String methodName = methodInvocation.getName().getIdentifier();
+        return methodName.equals("log");
     }
     
     // Helper class to find nested try statements
