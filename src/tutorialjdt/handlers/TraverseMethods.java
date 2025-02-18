@@ -61,13 +61,13 @@ public class TraverseMethods extends ASTVisitor{
 //		}
 		
 	    // Traverse the method body to find method invocations
-//		if (isFindMethodInvocation) {			
-//			node.getBody().accept(new MethodInvocationVisitor());
-//		}
+		if (isFindMethodInvocation) {			
+			node.getBody().accept(new MethodInvocationVisitor());
+		}
 		
-//		if (isFindControlBlock) {
-//			node.getBody().accept(new ControlBlocksVisitor());
-//		}
+		if (isFindControlBlock) {
+			node.getBody().accept(new ControlBlocksVisitor());
+		}
 
 	    return super.visit(node);
 	}

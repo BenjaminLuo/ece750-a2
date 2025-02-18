@@ -84,22 +84,19 @@ public class SampleHandler extends AbstractHandler {
 		
 	    CompilationUnit astRoot = (CompilationUnit) parser.createAST(null); // Parse the code
 	    
-	    TraverseMethods traverseMethods = new TraverseMethods(); // Traverse the AST to find method declarations
-	    
-	    traverseMethods = traverseMethods.findMethodInvocation(true);  // Traverse the AST to find methods declaration and invocations
-	    traverseMethods = traverseMethods.findControlBlock(true); // Traverse the AST to find methods declaration and control blocks
-	    
-	    astRoot.accept(traverseMethods); 
-	    
-	    System.out.println("Detected number of declared methods: " + Integer.toString(traverseMethods.getNumberOfMethods()));
-	 
-	    ThrowWithinFinallyVisitor visitor = new ThrowWithinFinallyVisitor();
-	    astRoot.accept(visitor);
+//	    TraverseMethods traverseMethods = new TraverseMethods(); // Traverse the AST to find method declarations
+//	    traverseMethods = traverseMethods.findMethodInvocation(true);  // Traverse the AST to find methods declaration and invocations
+//	    traverseMethods = traverseMethods.findControlBlock(true); // Traverse the AST to find methods declaration and control blocks
+//	    astRoot.accept(traverseMethods); 
+//	    System.out.println("Detected number of declared methods: " + Integer.toString(traverseMethods.getNumberOfMethods()));
+
+	    TryVisitor tryVisitor = new TryVisitor(unit);
+	    astRoot.accept(tryVisitor);
 	    
 	    MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor(unit);
-	    
 	    astRoot.accept(methodVisitor);
 	    
+	    System.out.println("Number of 'Throw Within Finally': " + Integer.toString(tryVisitor.getThrowWithinFinallyCount()));
 	    System.out.println("Number of 'Throws Generic': " + Integer.toString(methodVisitor.getThrowsGenericCount()));
 	    System.out.println("Number of 'Throws Kitchen Sink': " + Integer.toString(methodVisitor.getThrowsKitchenSinkCount()));
 

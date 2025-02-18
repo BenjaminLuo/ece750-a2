@@ -44,9 +44,8 @@ public class MethodDeclarationVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		
-		String sourceCode = node.getBody().toString();
-		
 		// Get list of exceptions in the method declaration
+		@SuppressWarnings("unchecked")
 		List<Type> exceptions = node.thrownExceptionTypes();
 
 		// Count exceptions
