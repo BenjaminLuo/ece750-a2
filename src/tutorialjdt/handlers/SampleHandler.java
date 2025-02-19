@@ -19,6 +19,10 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class SampleHandler extends AbstractHandler {
+	private int throwWithinFinallyCount = 0;
+	private int logAndThrowCount = 0;
+	private int throwsGenericCount = 0;
+	private int throwsKitchenSinkCount = 0;
 
 
 	@Override
@@ -43,6 +47,10 @@ public class SampleHandler extends AbstractHandler {
 			}
 		}
 
+		System.out.println("Number of 'Throw Within Finally': " + Integer.toString(this.throwWithinFinallyCount));
+		System.out.println("Number of 'Log and Throw': " + Integer.toString(this.logAndThrowCount));
+		System.out.println("Number of 'Throws Generic': " + Integer.toString(this.throwsGenericCount));
+		System.out.println("Number of 'Throws Kitchen Sink': " + Integer.toString(this.throwsKitchenSinkCount));
 
 		System.out.println("Finish");
 		
@@ -74,7 +82,7 @@ public class SampleHandler extends AbstractHandler {
 
 	
 	private void analyzeCompilationUnit(ICompilationUnit unit) {
-		System.out.println("    Compilation Unit: " + unit.getElementName());
+		// System.out.println("    Compilation Unit: " + unit.getElementName());
 	    ASTParser parser = ASTParser.newParser(AST.JLS22);
 	    parser.setSource(unit);
 	    parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -83,12 +91,6 @@ public class SampleHandler extends AbstractHandler {
 		parser.setStatementsRecovery(true);
 		
 	    CompilationUnit astRoot = (CompilationUnit) parser.createAST(null); // Parse the code
-	    
-//	    TraverseMethods traverseMethods = new TraverseMethods(); // Traverse the AST to find method declarations
-//	    traverseMethods = traverseMethods.findMethodInvocation(true);  // Traverse the AST to find methods declaration and invocations
-//	    traverseMethods = traverseMethods.findControlBlock(true); // Traverse the AST to find methods declaration and control blocks
-//	    astRoot.accept(traverseMethods); 
-//	    System.out.println("Detected number of declared methods: " + Integer.toString(traverseMethods.getNumberOfMethods()));
 
 	    TryVisitor tryVisitor = new TryVisitor(unit);
 	    astRoot.accept(tryVisitor);
@@ -96,11 +98,12 @@ public class SampleHandler extends AbstractHandler {
 	    MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor(unit);
 	    astRoot.accept(methodVisitor);
 	    
-	    System.out.println("Number of 'Throw Within Finally': " + Integer.toString(tryVisitor.getThrowWithinFinallyCount()));
-	    System.out.println("Number of 'Log and Throw': " + Integer.toString(tryVisitor.getLogAndThrowCount()));
-	    System.out.println("Number of 'Throws Generic': " + Integer.toString(methodVisitor.getThrowsGenericCount()));
-	    System.out.println("Number of 'Throws Kitchen Sink': " + Integer.toString(methodVisitor.getThrowsKitchenSinkCount()));
 
+	    this.throwWithinFinallyCount += tryVisitor.getThrowWithinFinallyCount();
+	    this.logAndThrowCount += tryVisitor.getLogAndThrowCount();
+	    this.throwsGenericCount += methodVisitor.getThrowsGenericCount();
+	    this.throwsKitchenSinkCount += methodVisitor.getThrowsKitchenSinkCount();
+	    
 	}
 
 }

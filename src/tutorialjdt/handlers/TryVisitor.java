@@ -70,6 +70,21 @@ public class TryVisitor extends ASTVisitor {
         return super.visit(node);
     }
     
+    // Helper class to find nested try statements
+    private class TryStatementFinder extends ASTVisitor {
+        private boolean nestedThrowFound = false;
+        
+        @Override
+        public boolean visit(ThrowStatement node) {
+        	nestedThrowFound = true;
+            return false; // Stop visiting once we find a try statement
+        }
+        
+        public boolean hasNestedTry() {
+            return nestedThrowFound;
+        }
+    }
+    
     @Override
     public boolean visit(CatchClause node) {
         Block catchBody = node.getBody();
@@ -105,18 +120,4 @@ public class TryVisitor extends ASTVisitor {
         return methodName.equals("log");
     }
     
-    // Helper class to find nested try statements
-    private class TryStatementFinder extends ASTVisitor {
-        private boolean nestedThrowFound = false;
-        
-        @Override
-        public boolean visit(ThrowStatement node) {
-        	nestedThrowFound = true;
-            return false; // Stop visiting once we find a try statement
-        }
-        
-        public boolean hasNestedTry() {
-            return nestedThrowFound;
-        }
-    }
 }
