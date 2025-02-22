@@ -23,6 +23,7 @@ public class SampleHandler extends AbstractHandler {
 	private int logAndThrowCount = 0;
 	private int throwsGenericCount = 0;
 	private int throwsKitchenSinkCount = 0;
+	private int incompleteImplementationCount = 0;
 
 
 	@Override
@@ -51,6 +52,8 @@ public class SampleHandler extends AbstractHandler {
 		System.out.println("Number of 'Log and Throw': " + Integer.toString(this.logAndThrowCount));
 		System.out.println("Number of 'Throws Generic': " + Integer.toString(this.throwsGenericCount));
 		System.out.println("Number of 'Throws Kitchen Sink': " + Integer.toString(this.throwsKitchenSinkCount));
+		System.out.println("Number of 'Incomplete Implementation': " + Integer.toString(this.incompleteImplementationCount));
+		
 
 		System.out.println("Finish");
 		
@@ -98,11 +101,15 @@ public class SampleHandler extends AbstractHandler {
 	    MethodDeclarationVisitor methodVisitor = new MethodDeclarationVisitor(unit);
 	    astRoot.accept(methodVisitor);
 	    
+		IncompleteImplementationVisitor incompleteVisitor = new IncompleteImplementationVisitor(unit, astRoot);
+		astRoot.accept(incompleteVisitor);
+	    
 
 	    this.throwWithinFinallyCount += tryVisitor.getThrowWithinFinallyCount();
 	    this.logAndThrowCount += tryVisitor.getLogAndThrowCount();
 	    this.throwsGenericCount += methodVisitor.getThrowsGenericCount();
 	    this.throwsKitchenSinkCount += methodVisitor.getThrowsKitchenSinkCount();
+	    this.incompleteImplementationCount += incompleteVisitor.getIncompleteImplementationCount();
 	    
 	}
 
