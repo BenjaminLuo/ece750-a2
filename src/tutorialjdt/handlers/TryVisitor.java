@@ -33,9 +33,10 @@ public class TryVisitor extends ASTVisitor {
 	
     private String getLocation(int startPosition) {
         try {
+        	String fileNameString = unit.getResource().getLocation().toOSString();
             IDocument document = new Document(unit.getSource());
             int lineNumber = document.getLineOfOffset(startPosition) + 1;
-            return "File: " + unit.getElementName() + ", Line: " + lineNumber;
+            return "File: " + fileNameString + ", Line: " + lineNumber;
         } catch (Exception e) {
             e.printStackTrace();
             return "File: " + unit.getElementName() + ", Line: Unknown";
