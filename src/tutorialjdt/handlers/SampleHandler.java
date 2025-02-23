@@ -24,6 +24,7 @@ public class SampleHandler extends AbstractHandler {
 	private int throwsGenericCount = 0;
 	private int throwsKitchenSinkCount = 0;
 	private int incompleteImplementationCount = 0;
+	private int nestedTryCount = 0;
 
 
 	@Override
@@ -53,7 +54,7 @@ public class SampleHandler extends AbstractHandler {
 		System.out.println("Number of 'Throws Generic': " + Integer.toString(this.throwsGenericCount));
 		System.out.println("Number of 'Throws Kitchen Sink': " + Integer.toString(this.throwsKitchenSinkCount));
 		System.out.println("Number of 'Incomplete Implementation': " + Integer.toString(this.incompleteImplementationCount));
-		
+		System.out.println("Number of 'Nested Try': " + Integer.toString(this.nestedTryCount));
 
 		System.out.println("Finish");
 		
@@ -103,6 +104,9 @@ public class SampleHandler extends AbstractHandler {
 	    
 		IncompleteImplementationVisitor incompleteVisitor = new IncompleteImplementationVisitor(unit, astRoot);
 		astRoot.accept(incompleteVisitor);
+		
+		NestedTryVisitor nestVisitor = new NestedTryVisitor(unit);
+		astRoot.accept(nestVisitor);
 	    
 
 	    this.throwWithinFinallyCount += tryVisitor.getThrowWithinFinallyCount();
@@ -110,6 +114,7 @@ public class SampleHandler extends AbstractHandler {
 	    this.throwsGenericCount += methodVisitor.getThrowsGenericCount();
 	    this.throwsKitchenSinkCount += methodVisitor.getThrowsKitchenSinkCount();
 	    this.incompleteImplementationCount += incompleteVisitor.getIncompleteImplementationCount();
+	    this.nestedTryCount += nestVisitor.getNestedTryCount();
 	    
 	}
 
