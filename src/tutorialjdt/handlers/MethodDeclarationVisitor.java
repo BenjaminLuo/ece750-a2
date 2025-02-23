@@ -72,6 +72,7 @@ public class MethodDeclarationVisitor extends ASTVisitor {
             	this.throwsGenericCount += 1;
                 System.out.println("[ANTIPATTERN WARNING] 'Throws Generic' anti-pattern detected: " + getLocation(node.getStartPosition()));
                 System.out.println("----");
+                break;
             }
         }
 

@@ -50,15 +50,15 @@ public class TraverseMethods extends ASTVisitor{
 	    }
 
 	    // Format the method name and parameter types into a single line
-//	    String methodSignature = method_declaration_signature + "(" + String.join(", ", parameterTypes) + ")";
-//	    System.out.println("      Method Signature: " + methodSignature);
-//	    
-//	    System.out.println("        Method Name: " + method_declaration_signature);
-//		
-//		for (Object param: node.parameters()) {
-//			method_declaration_signature += ((SingleVariableDeclaration) param).getType().toString();
-//			System.out.println("        Input param types: " + ((SingleVariableDeclaration) param).getType().toString());
-//		}
+	    String methodSignature = method_declaration_signature + "(" + String.join(", ", parameterTypes) + ")";
+	    System.out.println("      Method Signature: " + methodSignature);
+	    
+	    System.out.println("        Method Name: " + method_declaration_signature);
+		
+		for (Object param: node.parameters()) {
+			method_declaration_signature += ((SingleVariableDeclaration) param).getType().toString();
+			System.out.println("        Input param types: " + ((SingleVariableDeclaration) param).getType().toString());
+		}
 		
 	    // Traverse the method body to find method invocations
 		if (isFindMethodInvocation) {			

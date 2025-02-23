@@ -1,19 +1,13 @@
 package tutorialjdt.handlers;
 
-import java.awt.print.Printable;
-import java.security.PublicKey;
-import java.util.concurrent.BlockingDeque;
-
 import org.eclipse.jdt.core.dom.Comment;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.internal.compiler.IDocumentElementRequestor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
