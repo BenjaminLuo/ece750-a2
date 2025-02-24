@@ -60,7 +60,7 @@ public class MethodDeclarationVisitor extends ASTVisitor {
 		// Get list of exceptions in the method declaration
 		@SuppressWarnings("unchecked")
 		List<Type> exceptions = node.thrownExceptionTypes();
-		List<String> genericExceptions = Arrays.asList("Exception", "RuntimeException", "IOException", "NullPointerException", "ArrayIndexOutOfBoundsException", "SQLException");
+		List<String> genericExceptions = Arrays.asList("Exception");
 
 		// Count exceptions
 		int numExceptions = exceptions.size();

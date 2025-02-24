@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -107,6 +108,16 @@ public class TryVisitor extends ASTVisitor {
                     if (containsThrow(stmt)) {
                         hasThrow = true;
                     }
+                    
+                    // Check if-else
+                    if (stmt instanceof IfStatement) {
+                        if (containsLogAndThrowInSameBranch((IfStatement) stmt)) {
+                            this.logAndThrowCounter += 1;
+                            System.out.println("[ANTIPATTERN WARNING] 'Log and Throw' anti-pattern detected: " 
+                                + getLocation(node.getStartPosition()) + "\n" + node.toString());
+                            System.out.println("----");
+                        }
+                    }
                 }
             }
 
@@ -120,6 +131,35 @@ public class TryVisitor extends ASTVisitor {
         return super.visit(node);        
     }
 
+    private boolean containsLogAndThrowInSameBranch(IfStatement ifStmt) {
+        // check if branch
+        boolean hasLoggingInThen = containsLogging(ifStmt.getThenStatement());
+        boolean hasThrowInThen = containsThrow(ifStmt.getThenStatement());
+
+        if (hasLoggingInThen && hasThrowInThen) {
+            return true;
+        }
+
+        // check else branch
+        Statement elseStmt = ifStmt.getElseStatement();
+        if (elseStmt != null) {
+            if (elseStmt instanceof IfStatement) {
+                // handle else if recursively
+                if (containsLogAndThrowInSameBranch((IfStatement) elseStmt)) {
+                    return true;
+                }
+            } else {
+                // handle else block
+                boolean hasLoggingInElse = containsLogging(elseStmt);
+                boolean hasThrowInElse = containsThrow(elseStmt);
+                if (hasLoggingInElse && hasThrowInElse) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
    
     private boolean containsLogging(Statement stmt) {
         if (stmt instanceof ExpressionStatement) {
